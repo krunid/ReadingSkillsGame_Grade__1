@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมฝึกอ่านคำพื้นฐาน ป.1 🎮</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sriracha&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sriracha', cursive;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #f0f9ff;
+        }
+
+        .nav-header {
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            font-size: 32px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-tabs {
+            background: #2563eb;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            position: fixed;
+            width: 100%;
+            top: 70px;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .nav-tab {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-tab.active {
+            background: white;
+            color: #2563eb;
+        }
+
+        .nav-tab:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-tab.active:hover {
+            background: white;
+        }
+
+        .content-area {
+            margin-top: 150px;
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .page-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 800px;
+            margin: 20px auto;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .choice {
+            background: #f0f9ff;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 24px;
+            text-align: center;
+            position: relative;
+        }
+
+        .choice:hover {
+            background: #e0f2fe;
+            transform: translateY(-2px);
+        }
+
+        .choice.correct {
+            background: #86efac;
+            color: #064e3b;
+        }
+
+        .choice.correct::after {
+            content: '✔️';
+            position: absolute;
+            right: 20px;
+            font-size: 28px;
+            animation: popIn 0.5s ease-out;
+        }
+
+        .choice.incorrect {
+            background: #fca5a5;
+            color: #7f1d1d;
+        }
+
+        .choice.incorrect::after {
+            content: '❌';
+            position: absolute;
+            right: 20px;
+            font-size: 28px;
+            animation: popIn 0.5s ease-out;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+            }
+            70% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .rules {
+            background: #f0f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .rules li {
+            margin: 10px 0;
+            font-size: 18px;
+        }
+
+        .button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .button:hover {
+            background: #1e40af;
+        }
+
+        .score {
+            font-size: 24px;
+            color: #2563eb;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .title {
+            color: #2563eb;
+            text-align: center;
+            margin: 20px 0;
+            font-size: 28px;
+        }
+
+        .feedback {
+            text-align: center;
+            font-size: 24px;
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .feedback.correct {
+            color: #064e3b;
+            background: #86efac;
+        }
+
+        .feedback.incorrect {
+            color: #7f1d1d;
+            background: #fca5a5;
+        }
+
+        .credit {
+            background: #1e40af;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .question-text {
+            font-size: 22px;
+            color: #1e40af;
+            margin: 20px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header class="nav-header">
+        เกมฝึกอ่านคำพื้นฐาน ป.1 🎮
+    </header>
+
+    <div class="nav-tabs">
+        <div class="nav-tab active" onclick="showPage('welcome')">👋 หน้าแรก</div>
+        <div class="nav-tab" onclick="showPage('game')">🎮 เล่นเกม</div>
+        <div class="nav-tab" onclick="showPage('summary')">📊 สรุปผล</div>
+    </div>
+
+    <div class="content-area">
+        <div id="welcome" class="page-container">
+            <h2 class="title">👋 ยินดีต้อนรับสู่เกมฝึกอ่านคำ</h2>
+            <div class="rules">
+                <h3>📝 กติกาการเล่น</h3>
+                <ul>
+                    <li>🎯 เกมมีทั้งหมด 20 ข้อ</li>
+                    <li>📖 อ่านคำถามและเลือกคำตอบที่ถูกต้อง</li>
+                    <li>⭐ ตอบถูกได้ข้อละ 1 คะแนน</li>
+                    <li>💡 มีเวลาคิดข้อละ 2 วินาที</li>
+                </ul>
+            </div>
+            <div style="text-align: center;">
+                <button class="button" onclick="startGame()">🎯 เริ่มเกม</button>
+            </div>
+        </div>
+
+        <div id="game" class="page-container hidden">
+            <div class="score">คะแนน: <span id="currentScore">0</span> / <span id="totalQuestions"></span></div>
+            <h3 class="title">คำถามที่ <span id="currentQuestion">1</span></h3>
+            <div id="questionText" class="question-text"></div>
+            <div id="choices"></div>
+            <div id="feedback" class="feedback"></div>
+        </div>
+
+        <div id="summary" class="page-container hidden">
+            <h2 class="title">🎉 สรุปผลคะแนน</h2>
+            <div class="score">
+                คะแนนที่ได้: <span id="finalScore">0</span> / <span id="totalScore">20</span>
+            </div>
+            <p id="performance" style="text-align: center; font-size: 24px;"></p>
+            <div style="text-align: center;">
+                <button class="button" onclick="restartGame()">🔄 เล่นอีกครั้ง</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="credit">
+        <div>🎨 ผู้จัดทำ: ครูนิด ศิษย์หลวงพ่อเสือ</div>
+        <div style="margin-top: 10px; font-size: 14px;">© 2024 ลิขสิทธิ์โปรแกรม: สงวนลิขสิทธิ์ตามกฎหมาย</div>
+    </footer>
+
+    <script>
+        const allQuestions = [
+            {
+                question: "คำใดเป็นสัตว์ที่มักอยู่ในน้ำ? 🐸",
+                choices: ["กบ", "ไก่", "กา"],
+                correct: 0
+            },
+            {
+                question: "คำใดเป็นสัตว์ที่อยู่ในบ้าน? 🐔",
+                choices: ["กา", "ไก่", "กบ"],
+                correct: 1
+            },
+            {
+                question: "คำใดเป็นสัตว์ที่บินได้? 🦅",
+                choices: ["กา", "ไก่", "กบ"],
+                correct: 0
+            },
+            {
+                question: "สิ่งใดใช้สำหรับเขียนหนังสือ? 📝",
+                choices: ["กระดาษ", "กระจก", "กระป๋อง"],
+                correct: 0
+            },
+            {
+                question: "คำใดเป็นสิ่งที่ใช้ส่องดูตัวเอง? 🪞",
+                choices: ["กระจก", "กระดาษ", "กระติก"],
+                correct: 0
+            },
+            {
+                question: "คำใดเป็นสัตว์ที่ชอบกินแครอท? 🐰",
+                choices: ["กระรอก", "กระต่าย", "กา"],
+                correct: 1
+            },
+            {
+                question: "คำใดเป็นสัตว์ที่ชอบกินถั่ว? 🐿️",
+                choices: ["กระรอก", "กระต่าย", "กา"],
+                correct: 0
+            },
+            {
+                question: "คำใดเป็นสิ่งที่ใช้ใส่น้ำ? 🫖",
+                choices: ["กระดาษ", "กระติก", "กระจก"],
+                correct: 1
+            },
+            {
+                question: "คำใดเป็นเสื้อผ้าที่ใส่คู่กับเสื้อ? 👖",
+                choices: ["กางเกง", "กระโปรง", "กระเป๋า"],
+                correct: 0
+            },
+            {
+                question: "คำใดเป็นสิ่งที่ใช้นั่ง? 🪑",
+                choices: ["เก้าอี้", "กางเกง", "เกวียน"],
+                correct: 0
+            },
+            {
+                question: "คำใดเป็นพาหนะโบราณที่ใช้วัวลาก? 🛖",
+                choices: ["รถ", "เรือ", "เกวียน"],
+                correct: 2
+            },
+            {
+                question: "คำใดเป็นการเก็บสิ่งของ? 🗃️",
+                choices: ["ขน", "เก็บ", "ขาย"],
+                correct: 1
+            },
+            {
+                question: "คำใดเป็นอาการที่ต้องการอาหาร? 😋",
+                choices: ["กิน", "เก็บ", "ขาย"],
+                correct: 0
+            },
+            {
+                question: "คำใดเป็นการย้ายสิ่งของ? 📦",
+                choices: ["กิน", "ขน", "ขาย"],
+                correct: 1
+            },
+            {
+                question: "คำใดเป็นการทำงานกับดิน? 🌱",
+                choices: ["ขุด", "ขน", "ขาย"],
+                correct: 0
+            },
+            {
+                question: "คำใดเป็นสิ่งที่ใช้นุ่งของผู้หญิง? 👗",
+                choices: ["กระโปรง", "กระเป๋า", "กระจก"],
+                correct: 0
+            },
+            {
+                question: "คำใดใช้เรียกอาการที่ไม่เคลื่อนไหว? 🧍",
+                choices: ["ขยับ", "ขาย", "ขัง"],
+                correct: 2
+            },
+            {
+                question: "คำใดเป็นเครื่องประดับที่ใส่ที่ข้อมือ? 💎",
+                choices: ["กำไล", "กระดุม", "กระจก"],
+                correct: 0
+            },
+            {
+                question: "คำใดเป็นสิ่งที่ใช้ติดเสื้อ? 👕",
+                choices: ["กระดุม", "กระจก", "กระเป๋า"],
+                correct: 0
+            },
+            {
+                question: "คำใดเป็นการรวมสิ่งของไว้ด้วยกัน? 📚",
+                choices: ["กอง", "กิน", "ขาย"],
+                correct: 0
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let questions = [];
+
+        function showPage(pageId) {
+            // ซ่อนทุกหน้า
+            document.querySelectorAll('.page-container').forEach(page => {
+                page.classList.add('hidden');
+            });
+            // แสดงหน้าที่เลือก
+            document.getElementById(pageId).classList.remove('hidden');
+            // อัพเดทแท็บที่แอคทีฟ
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.textContent.includes(pageId === 'welcome' ? 'หน้าแรก' : 
+                    pageId === 'game' ? 'เล่นเกม' : 'สรุปผล')) {
+                    tab.classList.add('active');
+                }
+            });
+        }
+
+        function startGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            questions = shuffleArray([...allQuestions]);
+            showPage('game');
+            document.getElementById('currentScore').textContent = '0';
+            document.getElementById('totalQuestions').textContent = questions.length;
+            showQuestion();
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function showQuestion() {
+            const question = questions[currentQuestionIndex];
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            document.getElementById('questionText').textContent = question.question;
+            
+            const choicesDiv = document.getElementById('choices');
+            choicesDiv.innerHTML = '';
+            question.choices.forEach((choice, index) => {
+                const button = document.createElement('div');
+                button.className = 'choice';
+                button.textContent = choice;
+                button.onclick = () => checkAnswer(index);
+                choicesDiv.appendChild(button);
+            });
+
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('feedback').className = 'feedback';
+        }
+
+        function checkAnswer(choiceIndex) {
+            const question = questions[currentQuestionIndex];
+            const feedback = document.getElementById('feedback');
+            const choices = document.getElementsByClassName('choice');
+
+            Array.from(choices).forEach((choice, index) => {
+                choice.style.pointerEvents = 'none';
+                if (index === question.correct) {
+                    choice.classList.add('correct');
+                }
+                if (index === choiceIndex && index !== question.correct) {
+                    choice.classList.add('incorrect');
+                }
+            });
+
+            if (choiceIndex === question.correct) {
+                feedback.textContent = '✨ เก่งมาก! ตอบถูกต้องแล้วค่ะ ✨';
+                feedback.className = 'feedback correct';
+                score++;
+                document.getElementById('currentScore').textContent = score;
+                choices[choiceIndex].classList.add('correct');
+                // เพิ่มเสียงเมื่อตอบถูก
+            } else {
+                feedback.textContent = '❌ ไม่ถูกต้อง คำตอบที่ถูกคือ: ' + question.choices[question.correct];
+                feedback.className = 'feedback incorrect';
+                choices[choiceIndex].classList.add('incorrect');
+                choices[question.correct].classList.add('correct');
+                // เพิ่มเสียงเมื่อตอบผิด
+            }
+
+            setTimeout(nextQuestion, 2000);
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showSummary();
+            }
+        }
+
+        function showSummary() {
+            showPage('summary');
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('totalScore').textContent = questions.length;
+
+            let performance = '';
+            const percentage = (score / questions.length) * 100;
+            if (percentage === 100) {
+                performance = '🌟 ยอดเยี่ยมมาก! น้องเก่งมากๆ เลย 🌟';
+            } else if (percentage >= 80) {
+                performance = '👏 ทำได้ดีมาก! พยายามต่อไปนะ 💪';
+            } else if (percentage >= 60) {
+                performance = '😊 ทำได้ดี! ลองฝึกฝนเพิ่มเติมนะ 📚';
+            } else {
+                performance = '💪 ไม่เป็นไร! เรามาลองใหม่ด้วยกันนะ 💕';
+            }
+            document.getElementById('performance').textContent = performance;
+        }
+
+        function restartGame() {
+            showPage('welcome');
+        }
+
+        // เริ่มต้นที่หน้าแรก
+        showPage('welcome');
+    </script>
+</body>
+</html>
